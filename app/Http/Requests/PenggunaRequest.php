@@ -11,7 +11,7 @@ class PenggunaRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class PenggunaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:penggunas,email,' . $this->route('pengguna'),
+            'password' => $this->isMethod('post') ? 'required|string|min:8' : 'nullable|string|min:8',
+            'no_hp' => 'required|string|max:15',
+            'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ];
     }
 }
