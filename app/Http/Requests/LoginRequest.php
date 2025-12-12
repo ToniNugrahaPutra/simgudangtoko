@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TransaksiRequest extends FormRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,8 @@ class TransaksiRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nama' => 'required|string|max:255',
-            'no_hp' => 'required|string|max:20',
-            'toko_id' => 'required|exists:merchants,id',
-            'produk' => 'required|array|min:1',
-            'produk.*.produk_id' => 'required|exists:produk,id',
-            'produk.*.jumlah' => 'required|integer|min:1',
+            'email' => 'required|email',
+            'password' => 'required|string',   
         ];
     }
 }
