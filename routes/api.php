@@ -19,6 +19,11 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::apiResource('roles', RoleController::class);
+    Route::apiResource('pengguna', PenggunaController::class);
+
+    Route::post('pengguna/role', [PenggunaRoleController::class, 'assignRole']);
+    
     Route::apiResource('produk', ProdukController::class);
 });
 
