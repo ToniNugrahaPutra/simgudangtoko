@@ -1,8 +1,12 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Http\Requests\StokTokoRequest;
+use App\Http\Resources\StokTokoResource;
 use App\Services\StokTokoService;
+
 class StokTokoController extends Controller
 {
  
@@ -23,11 +27,11 @@ class StokTokoController extends Controller
             'data' => $stokToko,
         ], 201);
     }
-    public function update(StokTokoRequest $request, int $tokoId, int $produkId)
+    public function update(StokTokoRequest $request, int $toko, int $produk)
     {
         $validated = $request->validated();
 
-        $stokToko = $this->stokTokoService->updateStock($tokoId, $produkId, $validated['stok'], $validated['gudang_id'] ?? null);
+        $stokToko = $this->stokTokoService->updateStock($toko, $produk, $validated['stok'], $validated['gudang_id'] ?? null);
         return response()->json([
             'message' => 'Stok berhasil diperbarui',
             'data' => $stokToko,

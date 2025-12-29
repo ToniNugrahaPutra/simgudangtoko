@@ -6,6 +6,10 @@ use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TokoController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\PenggunaRoleController;
+use App\Http\Controllers\StokGudangController;
+use App\Http\Controllers\StokTokoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,9 +28,36 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 
     Route::post('pengguna/role', [PenggunaRoleController::class, 'assignRole']);
     
+    Route::apiResource('kategori', GudangController::class);
     Route::apiResource('produk', ProdukController::class);
+
+    Route::apiResource('toko', TokoController::class);
+    Route::apiResource('gudang', GudangController::class);
+
+    Route::post('gudang/{gudang}/produk', [StokGudangController::class, 'attach']);
+    Route::delete('gudang/{gudang}/produk/{produk}', [StokGudangController::class, 'detach']);
+    Route::put('gudang/{gudang}/produk/{produk}', [StokGudangController::class, 'update']);
+
+    Route::post('toko/{toko}/produk', [StokTokoController::class, 'store']);
+    Route::put('toko/{toko}/produk/{produk}', [StokTokoController::class, 'update']);
+    Route::delete('toko/{toko}/produk/{produk}', [StokTokoController::class, 'destroy']); 
+
+    Route::apiResource('transaksi', TransaksiController::class);
 });
 
 Route::middleware(['auth:sanctum', 'role:admin|operator'])->group(function () {
-    Route::apiResource('transaksi', TransaksiController::class);
+    Route::get('kategori', [KategoriController::class, 'index']);
+    Route::get('kategori/{kategori}', [KategoriController::class, 'show']);
+
+    Route::get('produk', [ProdukController::class, 'index']);
+    Route::get('produk/{produk}', [ProdukController::class, 'show']);
+
+    Route::get('gudang', [GudangController::class, 'index']);
+    Route::get('gudang/{gudang}', [GudangController::class, 'show']);
+
+    Route::post('transaksi', [TransaksiController::class, 'store']);
+    Route::get('transaksi/{transaksi}', [TransaksiController::class, 'show']);
+
+    Route::get('my-toko', [TokoController::class, 'getMyTokoProfile']);
+    Route::get('my-toko/transactions', [TransaksiController::class, 'getTransaksiByToko']);
 });

@@ -19,10 +19,10 @@ class TransaksiController extends Controller
     public function index()
     {
         $fields = ['*'];
-        $transaksis = $this->transaksiService->getAll($fields);
+        $transaksi = $this->transaksiService->getAll($fields);
 
         return response()->json(
-            TransaksiResource::collection($transaksis)
+            TransaksiResource::collection($transaksi)
         );
     }
 
@@ -36,12 +36,11 @@ class TransaksiController extends Controller
         ], 201);
     }
 
-    public function show(int $id)
+    public function show(int $transaksi)
     {
         try {
             $fields = ['*'];
-            $transaksi = $this->transaksiService->getTransaksiById($id, $fields);
-
+            $transaksi = $this->transaksiService->getTransaksiById($transaksi, $fields);
             return response()->json(new TransaksiResource($transaksi));
 
         } catch (ModelNotFoundException $e) {
@@ -53,26 +52,21 @@ class TransaksiController extends Controller
 
     public function getTransaksiByToko()
     {
-        $pengguna = auth()->$pengguna();
-
+        $pengguna = auth()->user();
         if (!$pengguna) {
             return response()->json([
                 'message' => 'pengguna belum login'
             ], 401);
         }
-
         if (!$pengguna->toko) {
             return response()->json([
                 'message' => 'pengguna tidak memiliki toko'
             ], 403);
         }
-
         $tokoId = $pengguna->toko->id;
-
-        $transaksis = $this->transaksiService->getTransaksiByToko($tokoId, ['*']);
-
+        $transaksi = $this->transaksiService->getTransaksiByToko($tokoId, ['*']);
         return response()->json(
-            TransaksiResource::collection($transaksis)
+            TransaksiResource::collection($transaksi)
         );
     }
 }
