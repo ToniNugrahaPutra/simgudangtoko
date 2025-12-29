@@ -10,6 +10,7 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PenggunaRoleController;
 use App\Http\Controllers\StokGudangController;
 use App\Http\Controllers\StokTokoController;
+use App\Http\Controllers\TransaksiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
