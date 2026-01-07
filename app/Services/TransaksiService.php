@@ -2,133 +2,101 @@
 
 namespace App\Services;
 
-use App\Repositories\TransactionRepository;
-use App\Repositories\MerchantProductRepository;
-use App\Repositories\ProductRepository;
-use App\Repositories\MerchantRepository;
+use App\Repositories\TransaksiRepository;
+use App\Repositories\StokTokoRepository;
+use App\Repositories\ProdukRepository;
+use App\Repositories\TokoRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
-class TransactionService
+class TransaksiService
 {
-    private TransactionRepository $transactionRepository;
-    private MerchantProductRepository $merchantProductRepository;
-    private ProductRepository $productRepository;
-    private MerchantRepository $merchantRepository;
+    private TransaksiRepository $transaksiRepository;
+    private StokTokoRepository $stokTokoRepository;
+    private ProdukRepository $produkRepository;
+    private TokoRepository $tokoRepository;
 
     public function __construct(
-        TransactionRepository $transactionRepository,
-        MerchantProductRepository $merchantProductRepository,
-        ProductRepository $productRepository,
-        MerchantRepository $merchantRepository
-    ) {
-        $this->transactionRepository = $transactionRepository;
-        $this->merchantProductRepository = $merchantProductRepository;
-        $this->productRepository = $productRepository;
-        $this->merchantRepository = $merchantRepository;
+        TransaksiRepository $transaksiRepository,
+        StokTokoRepository $stokTokoRepository,
+        ProdukRepository $produkRepository,
+        TokoRepository $tokoRepository
+    ){
+        $this->transaksiRepository = $transaksiRepository;
+        $this->stokTokoRepository = $stokTokoRepository;
+        $this->produkRepository = $produkRepository;
+        $this->tokoRepository = $tokoRepository;
     }
 
-    public function getAll(array $fields)
-    {
-        return $this->transactionRepository->getAll($fields);
-    }
-
-    public function getTransactionById(int $id, array $fields)
-    {
-        $transaction = $this->transactionRepository->getById($id, $fields ?? ['*']);
-        if (!$transaction){
-            throw ValidationException::withMessages([
-                'transaction_id' => ['Transaction not found'],
-            ]);
-        }
-        return $transaction;
-    }
-
-    public function getTransactionsByMerchant(int $merchantId, array $fields)
-    {
-        return $this->transactionRepository->getTransactionsByMerchant($merchantId, $fields);
-    }
-
-    public function createTransaction(array $data)
+    public function createTransaksi(array $data)
     {
         return DB::transaction(function () use ($data) {
-        
-            $merchant = $this->merchantRepository->getById($data['merchant_id'], ['id', 'keeper_id']);
 
-            if(!$merchant){
+            $toko = $this->tokoRepository->getById($data['toko_id'], ['id','operator_id']);
+
+            if (!$toko) {
                 throw ValidationException::withMessages([
-                    'merchant_id' => ['Merchant not found'],
+                    'toko_id' => ['Toko tidak ditemukan'],
                 ]);
             }
 
-            if (Auth::id() != $merchant->keeper_id){
+            if (Auth::id() != $toko->operator_id) {
                 throw ValidationException::withMessages([
-                    'authorization' => ['Unauthorized : You can only process transactions for your assigned merchant.'],
+                    'authorization' => ['Anda tidak berhak membuat transaksi untuk toko ini'],
                 ]);
             }
 
-            $products =[];
-
-
+            $items = [];
             $subTotal = 0;
 
-            foreach ($data['products'] as $productData) {
-                
-                $merchantProduct = $this->merchantProductRepository->getByMerchantAndProduct(
-                    $data['merchant_id'],
-                    $productData['product_id']
+            foreach ($data['produk'] as $item) {
+
+                $stok = $this->stokTokoRepository->getByStokToko(
+                    $data['toko_id'], 
+                    $item['produk_id']
                 );
-                
 
-                if (!$merchantProduct || $merchantProduct->stock < $productData['quantity']){
+                if(!$stok || $stok->stok < $item['jumlah']){
                     throw ValidationException::withMessages([
-                        'stock' => ["Insufficient stock for product ID: " . $productData['product_id']],
+                        'stok' => ['Stok tidak cukup untuk produk ID '.$item['produk_id']],
                     ]);
                 }
 
-                $product = $this->productRepository->getById($productData['product_id'], ['price']);
+                $produk = $this->produkRepository->getById($item['produk_id'], ['id','harga']);
 
-                if (!$product){
-                    throw ValidationException::withMessages([
-                        'product_id' => ["Product ID {$productData['product_id']} not found"],
-                    ]);
-                }
+                $sub = $produk->harga * $item['jumlah'];
+                $subTotal += $sub;
 
-                $price = $product->price;
-                $productSubTotal = $productData['quantity'] * $price;
-                $subTotal += $productSubTotal;
-
-                $products[] = [
-                    'product_id' => $productData['product_id'],
-                    'quantity' => $productData['quantity'],
-                    'price' => $price,
-                    'sub_total' => $productSubTotal,
+                $items[] = [
+                    'produk_id' => $item['produk_id'],
+                    'jumlah'    => $item['jumlah'],
+                    'harga'     => $produk->harga,
+                    'sub_total' => $sub,
                 ];
 
-                $newStock = max(0, $merchantProduct->stock - $productData['quantity']);
-
-                $this->merchantProductRepository->updateStock(
-                    $data['merchant_id'],
-                    $productData['product_id'],
-                    $newStock
+                $this->stokTokoRepository->updateStok(
+                    $data['toko_id'],
+                    $item['produk_id'],
+                    $stok->stok - $item['jumlah']
                 );
             }
 
-            $taxTotal = $subTotal * 0.1;
-            $grandTotal = $subTotal + $taxTotal;
+            $pajak = $subTotal * 0.10;
+            $grandTotal = $subTotal + $pajak;
 
-            $transaction = $this->transactionRepository->create([
-                'name' => $data['name'],
-                'phone' => $data['phone'],
-                'merchant_id' => $data['merchant_id'],
-                'sub_total' => $subTotal,
-                'tax_total' => $taxTotal,
+            $transaksi = $this->transaksiRepository->create([
+                'nama'        => $data['nama'],
+                'telepon'     => $data['telepon'],
+                'toko_id'     => $data['toko_id'],
+                'sub_total'   => $subTotal,
+                'pajak_total' => $pajak,
                 'grand_total' => $grandTotal,
             ]);
-            $this->transactionRepository->createTransactionProduct($transaction->id, $products);
 
-            return $transaction->fresh();
+            $this->transaksiRepository->createDetailTransaksi($transaksi->id, $items);
+
+            return $transaksi->fresh();
         });
     }
 }
