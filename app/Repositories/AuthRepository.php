@@ -1,61 +1,35 @@
-<?php 
+<?php
 
 namespace App\Repositories;
 
-use App\Http\Resources\PenggunaResource;
 use App\Models\Pengguna;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AuthRepository
 {
-    public function register(array $data)
+    public function register(array $data): Pengguna
     {
-        return Pengguna::create([
-            'nama'      => $data['nama'],
-            'email'     => $data['email'],
-            'no_hp'     => $data['no_hp'],
-            'foto'     => $data['foto'],
-            'password'  => Hash::make($data['password']),
-        ]);
-    }
-    
-    public function login(array $data)
-    {
-        $credentials = [
-            'email'     => $data['email'],
-            'password'  => $data['password'],
-        ];
-
-        if (!Auth::attempt($credentials)) {
-            return response()->json([
-                'message' => 'The provided credentials do not match our records.',
-            ], 401);
-        }
-
-        request()->session()->regenerate();
-
-        $pengguna = Auth::pengguna();
-
-        return response()->json([
-            'message'   => 'Login successful.',
-            'pengguna'      => new PenggunaResource($pengguna->load('role')),
-        ]);
+        return Pengguna::create($data);
     }
 
-    public function tokenLogin(array $data)
+    public function findByEmail(string $email): ?Pengguna
     {
-        if (!Auth::attempt(['email' => $data['email'], 'password' => $data['password']])) {
-            return response()->json(['message' => 'Invalid Credentials',], 401);
+        return Pengguna::where('email', $email)->first();
+    }
+
+    public function validatePassword(Pengguna $pengguna, string $password): void
+    {
+        if (!Hash::check($password, $pengguna->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials do not match our records.'],
+            ]);
         }
+    }
 
-        $pengguna = Auth::pengguna();
-        $token = $pengguna->createToken('API Token')->plainTextToken;
-
-        return response()->json([
-            'message'   => 'Login successful.',
-            'token'     => $token,
-            'pengguna'      => new PenggunaResource($pengguna->load('role')),
-        ]);
+    public function createToken(Pengguna $pengguna): string
+    {
+        $pengguna->tokens()->delete();
+        return $pengguna->createToken('auth_token')->plainTextToken;
     }
 }

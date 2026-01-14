@@ -4,20 +4,18 @@ namespace App\Services;
 
 use App\Repositories\AuthRepository;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Validation\ValidationException;
 
 class AuthService
 {
-    private AuthRepository $authRepository;
-
-    public function __construct(AuthRepository $authRepository)
-    {
-        $this->authRepository = $authRepository;
-    }
+    public function __construct(
+        private AuthRepository $authRepository
+    ) {}
 
     public function register(array $data)
     {
         if (isset($data['foto']) && $data['foto'] instanceof UploadedFile) {
-            $data['foto'] = $this->uploadfoto($data['foto']);
+            $data['foto'] = $this->uploadFoto($data['foto']);
         }
 
         return $this->authRepository->register($data);
@@ -25,15 +23,27 @@ class AuthService
 
     public function login(array $data)
     {
-        return $this->authRepository->login($data);
+        $pengguna = $this->authRepository->findByEmail($data['email']);
+
+        if (!$pengguna) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials do not match our records.'],
+            ]);
+        }
+
+        $this->authRepository->validatePassword($pengguna, $data['password']);
+
+        $token = $this->authRepository->createToken($pengguna);
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type'   => 'Bearer',
+            'user'         => $pengguna->load('roles'),
+        ]);
     }
 
-    public function tokenLogin(array $data)
-    {
-        return $this->authRepository->tokenLogin($data);
-    }
 
-    private function uploadFoto(UploadedFile $foto):string
+    private function uploadFoto(UploadedFile $foto): string
     {
         return $foto->store('pengguna', 'public');
     }

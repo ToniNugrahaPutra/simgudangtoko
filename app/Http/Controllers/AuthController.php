@@ -20,7 +20,7 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request)
     {
-        $perngguna = $this->authService->register($request->validated());
+        $pengguna = $this->authService->register($request->validated());
         return response()->json(['message' => 'Pengguna berhasil register', 'pengguna' => $pengguna], 201);
     }
     
@@ -29,23 +29,19 @@ class AuthController extends Controller
         return $this->authService->login($request->validated());
     }
 
-    public function tokenLogin(LoginRequest $request)
-    {
-        return $this->authService->tokenLogin($request->validated());
-    }
-
     public function logout(Request $request)
     {
-        Auth::guard('web')->logout();
+        $request->user()->currentAccessToken()->delete();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return response()->json(['message' => 'Logged out successfully']);
+        return response()->json([
+            'message' => 'Logged out successfully'
+        ]);
     }
 
     public function pengguna(Request $request)
     {
-        return response()->json(new PenggunaResource($request->pengguna()));
+        return response()->json(
+            $request->user()->load('roles')
+        );
     }
 }
