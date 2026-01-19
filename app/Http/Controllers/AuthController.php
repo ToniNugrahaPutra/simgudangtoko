@@ -31,7 +31,9 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        if ($request->user() && $request->user()->currentAccessToken()) {
         $request->user()->currentAccessToken()->delete();
+        }
 
         return response()->json([
             'message' => 'Logged out successfully'
@@ -40,8 +42,6 @@ class AuthController extends Controller
 
     public function pengguna(Request $request)
     {
-        return response()->json(
-            $request->user()->load('roles')
-        );
+        return response()->json($request->user());
     }
 }

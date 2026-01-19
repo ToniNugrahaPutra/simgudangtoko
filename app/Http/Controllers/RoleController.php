@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Resources\RoleResource;
+use App\Http\Requests\RoleRequest;
+use App\Services\RoleService;
 
 class RoleController extends Controller
 {
@@ -18,8 +21,8 @@ class RoleController extends Controller
     public function index()
     {
         $fields = ['id', 'nama'];
-        $roles = $this->roleService->getAll($fields);
-        return response()->json(RoleResource::collection($roles));
+        $role = $this->roleService->getAll($fields);
+        return response()->json(RoleResource::collection($role));
     }
 
     public function show(int $id)

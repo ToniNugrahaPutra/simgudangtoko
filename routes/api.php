@@ -18,16 +18,18 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('logout', [AuthController::class, 'logout']);
     Route::get('me', [AuthController::class, 'pengguna']);
+    Route::post('bootstrap/role', [RoleController::class, 'store']);
+    Route::post('pengguna/role', [PenggunaRoleController::class, 'assignRole']);
+    Route::post('logout', [AuthController::class, 'logout']);
 });
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 
     Route::apiResource('role', RoleController::class);
     Route::apiResource('pengguna', PenggunaController::class);
-    Route::post('pengguna/role', [PenggunaRoleController::class, 'assignRole']);
 
+    
     Route::apiResource('kategori', KategoriController::class);
     Route::apiResource('produk', ProdukController::class);
     Route::apiResource('gudang', GudangController::class);

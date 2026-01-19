@@ -19,7 +19,7 @@ class RoleRepository
     public function create(array $data)
     {
         return Role::create([
-            'nama' => $data['nama'],
+            'name' => $data['name'],
             'guard_name' => 'web',
         ]);
     }
