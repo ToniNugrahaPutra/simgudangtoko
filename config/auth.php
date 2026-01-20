@@ -14,7 +14,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'sanctum',
+        'guard' => 'web',
+        'password' => 'pengguna',
     ],
 
     /*
@@ -40,10 +41,10 @@ return [
             'provider' => 'pengguna',
         ],
 
-        'sanctum' => [
-            'driver' => 'sanctum',
-            'provider' => 'pengguna',
-        ],
+        // 'sanctum' => [
+        //     'driver' => 'sanctum',
+        //     'provider' => 'pengguna',
+        // ],
     ],
 
     /*
@@ -64,7 +65,7 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'pengguna' => [
             'driver' => 'eloquent',
             'model' => App\Models\Pengguna::class,
         ],
@@ -95,9 +96,9 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
-            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+        'pengguna' => [
+            'provider' => 'pengguna',
+            'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],

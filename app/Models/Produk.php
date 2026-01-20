@@ -21,6 +21,8 @@ class Produk extends Model
         'is_popular',
     ];
 
+    protected $table = 'produk';
+
     public function kategori()
     {
         return $this->belongsTo(Kategori::class);

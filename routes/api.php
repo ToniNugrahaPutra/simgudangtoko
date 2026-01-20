@@ -46,20 +46,20 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::apiResource('transaksi', TransaksiController::class);
 });
 
-Route::middleware(['auth:sanctum', 'role:admin|operator'])->group(function () {
+// Route::middleware(['auth:sanctum', 'role:admin|operator'])->group(function () {
 
-    Route::get('kategori', [KategoriController::class, 'index']);
-    Route::get('kategori/{kategori}', [KategoriController::class, 'show']);
+//     Route::get('kategori', [KategoriController::class, 'index']);
+//     Route::get('kategori/{kategori}', [KategoriController::class, 'show']);
 
-    Route::get('produk', [ProdukController::class, 'index']);
-    Route::get('produk/{produk}', [ProdukController::class, 'show']);
+//     Route::get('produk', [ProdukController::class, 'index']);
+//     Route::get('produk/{produk}', [ProdukController::class, 'show']);
 
-    Route::get('gudang', [GudangController::class, 'index']);
-    Route::get('gudang/{gudang}', [GudangController::class, 'show']);
+//     Route::get('gudang', [GudangController::class, 'index']);
+//     Route::get('gudang/{gudang}', [GudangController::class, 'show']);
 
-    Route::post('transaksi', [TransaksiController::class, 'store']);
-    Route::get('transaksi/{transaksi}', [TransaksiController::class, 'show']);
+//     Route::post('transaksi', [TransaksiController::class, 'store']);
+//     Route::get('transaksi/{transaksi}', [TransaksiController::class, 'show']);
 
-    Route::get('my-toko', [TokoController::class, 'getMyTokoProfile']);
-    Route::get('my-toko/transactions', [TransaksiController::class, 'getTransaksiByToko']);
-});
+//     Route::get('my-toko', [TokoController::class, 'getMyTokoProfile']);
+//     Route::get('my-toko/transactions', [TransaksiController::class, 'getTransaksiByToko']);
+// });

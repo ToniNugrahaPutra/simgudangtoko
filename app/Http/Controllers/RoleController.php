@@ -20,7 +20,7 @@ class RoleController extends Controller
 
     public function index()
     {
-        $fields = ['id', 'nama'];
+        $fields = ['id', 'name'];
         $role = $this->roleService->getAll($fields);
         return response()->json(RoleResource::collection($role));
     }
@@ -46,7 +46,7 @@ class RoleController extends Controller
 
     public function destroy(int $id)
     {
-        $this->roleService->delete($id);
+        $this->roleService->delete($id);    
         return response()->json([
             'message' => 'Role berhasil dihapus.',
         ]);

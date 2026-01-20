@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Product;
+use App\Models\Produk;
 use Illuminate\Support\Facades\Storage;
 
 class ProdukRepository

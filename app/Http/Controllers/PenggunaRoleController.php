@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Pengguna;
 use App\Services\PenggunaRoleService;
 use App\Http\Requests\PenggunaRoleRequest;
+use Spatie\Permission\Models\Role;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -19,16 +21,15 @@ class PenggunaRoleController extends Controller
         $this->penggunaRoleService = $penggunaRoleService;
     }
 
-    public function assignRole(PenggunaRoleRequest $request)
+    public function assignRole(Request $request)
     {
-        $user = $this->penggunaRoleService->assignRole(
-            $request->validated()['pengguna_id'], 
-            $request->validated()['role_id']
-        );
+        $pengguna = Pengguna::findOrFail($request->pengguna_id);
+        $role = Role::where('name', $request->role)->firstOrFail();
+
+        $pengguna->syncRoles([$role->name]);
 
         return response()->json([
             'message' => 'Role berhasil ditambahkan',
-            'data' => $user
         ]);
     }
 
