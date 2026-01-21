@@ -23,15 +23,25 @@ class PenggunaRoleController extends Controller
 
     public function assignRole(Request $request)
     {
+        $request->validate([
+            'pengguna_id' => 'required|exists:pengguna,id',
+            'role' => 'required|string|exists:roles,name',
+        ]);
+
         $pengguna = Pengguna::findOrFail($request->pengguna_id);
-        $role = Role::where('name', $request->role)->firstOrFail();
+
+        $role = Role::where('name', $request->role)
+                    ->where('guard_name', 'web')
+                    ->firstOrFail();
 
         $pengguna->syncRoles([$role->name]);
 
         return response()->json([
             'message' => 'Role berhasil ditambahkan',
+            'roles' => $pengguna->roles,
         ]);
     }
+
 
     public function removeRole(PenggunaRoleRequest $request)
     {

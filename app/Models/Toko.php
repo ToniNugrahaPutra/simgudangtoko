@@ -17,7 +17,7 @@ class Toko extends Model
         'no_hp',
         'operator_id',
     ];
-
+    protected $table = 'toko';
     public function operator()
     {
         return $this->belongsTo(Pengguna::class, 'operator_id');

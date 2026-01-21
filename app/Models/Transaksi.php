@@ -17,7 +17,7 @@ class Transaksi extends Model
         'total_bayar',
         'toko_id',
     ];
-
+    protected $table = 'transaksi';
     public function toko()
     {
         return $this->belongsTo(Toko::class);

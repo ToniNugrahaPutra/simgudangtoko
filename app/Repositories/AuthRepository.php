@@ -30,6 +30,7 @@ class AuthRepository
     public function createToken(Pengguna $pengguna): string
     {
         $pengguna->tokens()->delete();
+
         return $pengguna->createToken('auth_token')->plainTextToken;
     }
 }

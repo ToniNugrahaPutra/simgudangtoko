@@ -15,6 +15,8 @@ class StokGudang extends Model
         'stok',
     ];
 
+    protected $table = 'stok_gudang';
+
     public function gudang()
     {
         return $this->belongsTo(Gudang::class);

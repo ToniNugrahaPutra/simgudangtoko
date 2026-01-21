@@ -29,7 +29,6 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::apiResource('role', RoleController::class);
     Route::apiResource('pengguna', PenggunaController::class);
 
-    
     Route::apiResource('kategori', KategoriController::class);
     Route::apiResource('produk', ProdukController::class);
     Route::apiResource('gudang', GudangController::class);

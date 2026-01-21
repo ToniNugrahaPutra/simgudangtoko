@@ -15,7 +15,7 @@ class StokToko extends Model
         'stok',
         'gudang_id',
     ];
-
+    protected $table = 'stok_toko';
     public function toko()
     {
         return $this->belongsTo(Toko::class);

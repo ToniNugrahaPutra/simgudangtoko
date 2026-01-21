@@ -16,6 +16,8 @@ class Kategori extends Model
         'tagline',
     ];
 
+    protected $table = 'kategori';
+
     public function produk()
     {
         return $this->hasMany(Produk::class);

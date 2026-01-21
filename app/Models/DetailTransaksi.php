@@ -17,6 +17,8 @@ class DetailTransaksi extends Model
         'transaksi_id',
     ];
 
+    protected $table = 'detail_transaksi';
+
     public function transaksi()
     {
         return $this->belongsTo(Transaksi::class);

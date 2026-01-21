@@ -17,6 +17,8 @@ class Gudang extends Model
         'no_hp',
     ];
     
+    protected $table = 'gudang';
+
     public function produk()
     {
         return $this->belongsToMany(Produk::class, 'stok_gudang')
