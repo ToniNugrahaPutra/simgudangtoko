@@ -29,6 +29,11 @@ class TransaksiService
         $this->tokoRepository = $tokoRepository;
     }
 
+    public function getAll(array $fields)
+    {
+        return $this->transaksiRepository->getAll($fields);
+    }
+    
     public function createTransaksi(array $data)
     {
         return DB::transaction(function () use ($data) {
