@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\PenggunaRequest;
 use App\Http\Resources\PenggunaResource;
 use App\Services\PenggunaService;
+use App\Models\Pengguna;
 
 class PenggunaController extends Controller
 {
@@ -17,11 +18,23 @@ class PenggunaController extends Controller
     }
     public function index()
     {
-        $fields = ['id', 'nama', 'email', 'foto', 'no_hp'];
-        $pengguna = $this->penggunaService->getAll($fields ?: ['*']);
-        return response()->json(PenggunaResource::collection($pengguna));
+    $pengguna = Pengguna::with('roles')->get();
+
+    return response()->json(
+        $pengguna->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->nama,
+                'email' => $user->email,
+                'phone' => $user->no_hp,
+                'photo' => asset('storage/' . $user->foto),
+                'roles' => $user->roles->pluck('name'),
+            ];
+        })
+    );
+
     }
-    public function show(int $id)
+        public function show(int $id)
     {
         $fields = ['id', 'nama', 'email', 'foto', 'no_hp'];
         $pengguna = $this->penggunaService->getById($id, $fields ?: ['*']);
