@@ -16,7 +16,7 @@ class TokoRepository
         return Toko::select($fields)->with(['operator', 'produk.kategori'])->findOrFail($id);
     }
 
-     public function create(array $data)
+    public function create(array $data)
     {
         return Toko::create($data);
     }
@@ -37,8 +37,8 @@ class TokoRepository
     public function getByOperatorId(int $operatorId, array $fields)
     {
         return Toko::select($fields)
-        ->where('operator_id', $operatorId)
-        ->with(['produk.kategori'])
-        ->firstOrFail();
+            ->where('operator_id', $operatorId)
+            ->with(['operator', 'produk.kategori'])
+            ->firstOrFail();
     }
 }
