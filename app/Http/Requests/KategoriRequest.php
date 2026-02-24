@@ -11,7 +11,7 @@ class KategoriRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,7 @@ class KategoriRequest extends FormRequest
         return [
             'nama' => 'required|string|max:255|unique:kategori,nama,' . $this->route('kategori'),
             'tagline' => 'required|string|max:255',
-            'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'foto' => ($this->isMethod('POST') && !$this->route('kategori')) ? 'required|image|mimes:jpeg,png,jpg,gif|max:2048' : 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 }

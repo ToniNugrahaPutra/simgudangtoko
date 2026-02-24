@@ -26,7 +26,7 @@ class PenggunaRequest extends FormRequest
             'email' => 'required|email|max:255|unique:pengguna,email,' . $this->route('pengguna'),
             'password' => $this->isMethod('post') ? 'required|string|min:8' : 'nullable|string|min:8',
             'no_hp' => 'required|string|max:15',
-            'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'foto' => ($this->isMethod('POST') && !$this->route('pengguna')) ? 'required|image|mimes:jpeg,png,jpg|max:2048' : 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ];
     }
 }

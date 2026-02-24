@@ -26,7 +26,7 @@ class TokoRequest extends FormRequest
             'alamat' => 'required|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'no_hp' => 'required|string|max:15',
-            'operator_id' => 'required|exists:users,id',
+            'operator_id' => 'required|exists:pengguna,id',
         ];
     }
 }

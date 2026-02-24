@@ -24,7 +24,7 @@ class TransaksiRequest extends FormRequest
         return [
             'nama' => 'required|string|max:255',
             'no_hp' => 'required|string|max:20',
-            'toko_id' => 'required|exists:merchants,id',
+            'toko_id' => 'required|exists:toko,id',
             'produk' => 'required|array|min:1',
             'produk.*.produk_id' => 'required|exists:produk,id',
             'produk.*.jumlah' => 'required|integer|min:1',

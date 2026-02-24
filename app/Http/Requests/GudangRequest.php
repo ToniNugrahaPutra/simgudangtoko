@@ -24,7 +24,7 @@ class GudangRequest extends FormRequest
         return [
             'nama' => 'required|string|max:255|unique:gudang,nama,' . $this->route('gudang'),
             'alamat' => 'required|string',
-            'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'foto' => ($this->isMethod('POST') && !$this->route('gudang')) ? 'required|image|mimes:jpeg,png,jpg|max:2048' : 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'no_hp' => 'required|string|max:255',
         ];
     }

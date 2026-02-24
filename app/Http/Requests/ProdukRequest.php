@@ -23,7 +23,7 @@ class ProdukRequest extends FormRequest
     {
         return [
             'nama' => 'required|string|max:255|unique:produk,nama,' . $this->route('produk'),
-            'thumbnail' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'thumbnail' => ($this->isMethod('POST') && !$this->route('produk')) ? 'required|image|mimes:jpeg,png,jpg|max:2048' : 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'deskripsi' => 'required|string',
             'harga' => 'required|integer|min:8',
             'kategori_id' => 'required|exists:kategori,id',
