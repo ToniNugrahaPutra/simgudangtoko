@@ -41,10 +41,10 @@ return [
             'provider' => 'pengguna',
         ],
 
-        // 'sanctum' => [
-        //     'driver' => 'sanctum',
-        //     'provider' => 'pengguna',
-        // ],
+        'sanctum' => [
+            'driver' => 'sanctum',
+            'provider' => 'pengguna',
+        ],
     ],
 
     /*
