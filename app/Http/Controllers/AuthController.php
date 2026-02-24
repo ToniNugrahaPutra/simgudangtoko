@@ -23,7 +23,7 @@ class AuthController extends Controller
         $pengguna = $this->authService->register($request->validated());
         return response()->json(['message' => 'Pengguna berhasil register', 'pengguna' => $pengguna], 201);
     }
-    
+
     public function login(LoginRequest $request)
     {
         return $this->authService->login($request->validated());
@@ -32,7 +32,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         if ($request->user() && $request->user()->currentAccessToken()) {
-        $request->user()->currentAccessToken()->delete();
+            $request->user()->currentAccessToken()->delete();
         }
 
         return response()->json([
@@ -43,7 +43,7 @@ class AuthController extends Controller
     public function pengguna(Request $request)
     {
         return response()->json(
-            $request->user()?->load('roles')
+            $request->user()?->load(['roles', 'toko'])
         );
     }
 }

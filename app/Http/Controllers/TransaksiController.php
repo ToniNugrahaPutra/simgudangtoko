@@ -21,15 +21,13 @@ class TransaksiController extends Controller
         $fields = ['*'];
         $transaksi = $this->transaksiService->getAll($fields);
 
-        return response()->json(
-            TransaksiResource::collection($transaksi)
-        );
+        return response()->json($transaksi);
     }
 
     public function store(TransaksiRequest $request)
     {
         $transaksi = $this->transaksiService->createTransaksi($request->validated());
-    
+
         return response()->json([
             'message' => 'Transaksi berhasil dibuat',
             'data' => new TransaksiResource($transaksi),
@@ -65,8 +63,6 @@ class TransaksiController extends Controller
         }
         $tokoId = $pengguna->toko->id;
         $transaksi = $this->transaksiService->getTransaksiByToko($tokoId, ['*']);
-        return response()->json(
-            TransaksiResource::collection($transaksi)
-        );
+        return response()->json($transaksi);
     }
 }

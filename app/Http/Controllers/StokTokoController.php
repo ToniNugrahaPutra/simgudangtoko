@@ -9,7 +9,7 @@ use App\Services\StokTokoService;
 
 class StokTokoController extends Controller
 {
- 
+
     private StokTokoService $stokTokoService;
     public function __construct(StokTokoService $stokTokoService)
     {
@@ -20,7 +20,7 @@ class StokTokoController extends Controller
         $validated = $request->validated();
         $validated['toko_id'] = $toko;
 
-        $stokToko = $this->stokTokoService->assignProductToToko($validated);
+        $stokToko = $this->stokTokoService->assignProdukToToko($validated);
 
         return response()->json([
             'message' => 'Produk sukses ditambahkan ke toko',
@@ -31,7 +31,7 @@ class StokTokoController extends Controller
     {
         $validated = $request->validated();
 
-        $stokToko = $this->stokTokoService->updateStock($toko, $produk, $validated['stok'], $validated['gudang_id'] ?? null);
+        $stokToko = $this->stokTokoService->updateStok($toko, $produk, $validated['stok'], $validated['gudang_id'] ?? null);
         return response()->json([
             'message' => 'Stok berhasil diperbarui',
             'data' => $stokToko,
@@ -39,7 +39,7 @@ class StokTokoController extends Controller
     }
     public function destroy(int $toko, int $produk)
     {
-        $this->stokTokoService->removeProductFromToko($toko, $produk);
+        $this->stokTokoService->removeProdukFromToko($toko, $produk);
 
         return response()->json([
             'message' => 'Produk berhasil dihapus dari toko',

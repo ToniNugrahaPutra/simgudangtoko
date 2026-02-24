@@ -27,7 +27,7 @@ class TokoController extends Controller
     public function show(int $id)
     {
         try{
-            $fields = ['id', 'nama', 'foto', 'operator_id', 'created_at', 'updated_at'];
+            $fields = ['id', 'nama', 'foto', 'operator_id', 'created_at', 'updated_at', 'no_hp', 'alamat'];
             $toko = $this->tokoService->getById($id, $fields);
             return response()->json(new TokoResource($toko));
         }catch(ModelNotFoundException $e){
@@ -75,7 +75,7 @@ class TokoController extends Controller
 
         try{
             $toko = $this->tokoService->getByOperatorId($userId);
-            
+
             return response()->json(new TokoResource($toko));
         }catch(ModelNotFoundException $e){
             return response()->json([

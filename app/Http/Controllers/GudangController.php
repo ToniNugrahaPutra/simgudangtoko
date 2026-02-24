@@ -22,15 +22,15 @@ class GudangController extends Controller
 
     public function index()
     {
-        $fields = ['id', 'nama', 'foto'];
+        $fields = ['id', 'nama', 'foto', 'no_hp', 'alamat'];
         $gudang = $this->gudangService->getAll($fields ?: ['*']);
         return response()->json(GudangResource::collection($gudang));
     }
-    
+
     public function show(int $id)
     {
         try {
-            $fields = ['id', 'nama', 'foto', 'no_hp'];
+            $fields = ['id', 'nama', 'foto', 'no_hp', 'alamat'];
             $gudang = $this->gudangService->getById($id, $fields);
             return response()->json(new GudangResource($gudang));
         } catch (ModelNotFoundException $e) {
@@ -57,7 +57,7 @@ class GudangController extends Controller
             ], 404);
         }
     }
- 
+
     public function destroy(int $id)
     {
         try {

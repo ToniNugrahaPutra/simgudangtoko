@@ -13,8 +13,7 @@ class StokGudangController extends Controller
     public function __construct
     (
         GudangService $gudangService
-    )
-    {
+    ) {
         $this->gudangService = $gudangService;
     }
     public function attach(Request $request, int $gudang)
@@ -24,9 +23,9 @@ class StokGudangController extends Controller
             'stok' => 'required|integer|min:1',
         ]);
 
-        $this->gudangService->attachProduk(
-            $gudang, 
-            $request->input('produk_id'), 
+        $this->gudangService->attachProduct(
+            $gudang,
+            $request->input('produk_id'),
             $request->input('stok')
         );
 
@@ -37,7 +36,7 @@ class StokGudangController extends Controller
 
     public function detach(int $gudang, int $produk)
     {
-        $this->gudangService->detachProduk($gudang, $produk);
+        $this->gudangService->detachProduct($gudang, $produk);
 
         return response()->json([
             'message' => 'Produk berhasil dihapus dari gudang',
@@ -46,9 +45,9 @@ class StokGudangController extends Controller
 
     public function update(StokGudangUpdateRequest $request, int $gudang, int $produk)
     {
-        $stokGudang = $this->gudangService->updateProdukStok(
-            $gudang, 
-            $produk, 
+        $stokGudang = $this->gudangService->updateProductStock(
+            $gudang,
+            $produk,
             $request->validated()['stok']
         );
 
