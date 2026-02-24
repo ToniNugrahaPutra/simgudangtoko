@@ -22,7 +22,7 @@ class TransaksiService
         StokTokoRepository $stokTokoRepository,
         ProdukRepository $produkRepository,
         TokoRepository $tokoRepository
-    ){
+    ) {
         $this->transaksiRepository = $transaksiRepository;
         $this->stokTokoRepository = $stokTokoRepository;
         $this->produkRepository = $produkRepository;
@@ -33,12 +33,22 @@ class TransaksiService
     {
         return $this->transaksiRepository->getAll($fields);
     }
-    
+
+    public function getTransaksiById(int $id, array $fields)
+    {
+        return $this->transaksiRepository->getById($id, $fields);
+    }
+
+    public function getTransaksiByToko(int $tokoId, array $fields)
+    {
+        return $this->transaksiRepository->getTransaksiByToko($tokoId);
+    }
+
     public function createTransaksi(array $data)
     {
         return DB::transaction(function () use ($data) {
 
-            $toko = $this->tokoRepository->getById($data['toko_id'], ['id','operator_id']);
+            $toko = $this->tokoRepository->getById($data['toko_id'], ['id', 'operator_id']);
 
             if (!$toko) {
                 throw ValidationException::withMessages([
@@ -57,26 +67,26 @@ class TransaksiService
 
             foreach ($data['produk'] as $item) {
 
-                $stok = $this->stokTokoRepository->getByStokToko(
-                    $data['toko_id'], 
+                $stok = $this->stokTokoRepository->getByTokoAndProduk(
+                    $data['toko_id'],
                     $item['produk_id']
                 );
 
-                if(!$stok || $stok->stok < $item['jumlah']){
+                if (!$stok || $stok->stok < $item['jumlah']) {
                     throw ValidationException::withMessages([
-                        'stok' => ['Stok tidak cukup untuk produk ID '.$item['produk_id']],
+                        'stok' => ['Stok tidak cukup untuk produk ID ' . $item['produk_id']],
                     ]);
                 }
 
-                $produk = $this->produkRepository->getById($item['produk_id'], ['id','harga']);
+                $produk = $this->produkRepository->getById($item['produk_id'], ['id', 'harga']);
 
                 $sub = $produk->harga * $item['jumlah'];
                 $subTotal += $sub;
 
                 $items[] = [
                     'produk_id' => $item['produk_id'],
-                    'jumlah'    => $item['jumlah'],
-                    'harga'     => $produk->harga,
+                    'jumlah' => $item['jumlah'],
+                    'harga' => $produk->harga,
                     'sub_total' => $sub,
                 ];
 
@@ -91,12 +101,12 @@ class TransaksiService
             $grandTotal = $subTotal + $pajak;
 
             $transaksi = $this->transaksiRepository->create([
-                'nama'        => $data['nama'],
-                'telepon'     => $data['telepon'],
-                'toko_id'     => $data['toko_id'],
-                'sub_total'   => $subTotal,
-                'pajak_total' => $pajak,
-                'grand_total' => $grandTotal,
+                'nama_pelanggan' => $data['nama'],
+                'no_hp' => $data['no_hp'],
+                'toko_id' => $data['toko_id'],
+                'sub_total' => $subTotal,
+                'pajak' => $pajak,
+                'total_bayar' => $grandTotal,
             ]);
 
             $this->transaksiRepository->createDetailTransaksi($transaksi->id, $items);

@@ -6,16 +6,15 @@ use App\Repositories\KategoriRepository;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-    class KategoriService
+class KategoriService
 {
-   private $kategoriRepository;
+    private $kategoriRepository;
 
     public function __construct
     (
         KategoriRepository $kategoriRepository
-    )
-    {
-         $this->kategoriRepository = $kategoriRepository;
+    ) {
+        $this->kategoriRepository = $kategoriRepository;
     }
 
     public function getAll(array $fields)
@@ -31,7 +30,7 @@ use Illuminate\Support\Facades\Storage;
     public function create(array $data)
     {
         if (isset($data['foto']) && $data['foto'] instanceof UploadedFile) {
-            $data['foto'] = $this->uploadPhoto($data['foto']);
+            $data['foto'] = $this->uploadFoto($data['foto']);
         }
 
         return $this->kategoriRepository->create($data);
@@ -44,9 +43,9 @@ use Illuminate\Support\Facades\Storage;
 
         if (isset($data['foto']) && $data['foto'] instanceof UploadedFile) {
             if (!empty($kategori->foto)) {
-                $this->deletePhoto($kategori->foto);
+                $this->deleteFoto($kategori->foto);
             }
-            $data['foto'] = $this->uploadPhoto($data['foto']);
+            $data['foto'] = $this->uploadFoto($data['foto']);
         }
 
         return $this->kategoriRepository->update($id, $data);
@@ -59,7 +58,7 @@ use Illuminate\Support\Facades\Storage;
         $kategori = $this->kategoriRepository->getById($id, $fields);
 
         if ($kategori->foto) {
-            $this->deletePhoto($kategori->foto);
+            $this->deleteFoto($kategori->foto);
 
         }
         $this->kategoriRepository->delete($id);
@@ -76,6 +75,6 @@ use Illuminate\Support\Facades\Storage;
         if (Storage::disk('public')->exists($relativePath)) {
             Storage::disk('public')->delete($relativePath);
         }
-    
+
     }
 }

@@ -27,7 +27,7 @@ class ProdukService
 
     public function create(array $data)
     {
-        if (isset ($data['thumbnail']) && $data['thumbnail'] instanceof UploadedFile){
+        if (isset($data['thumbnail']) && $data['thumbnail'] instanceof UploadedFile) {
             $data['thumbnail'] = $this->uploadPhoto($data['thumbnail']);
         }
         return $this->produkRepository->create($data);
@@ -37,9 +37,9 @@ class ProdukService
     {
         $fields = ['*'];
         $produk = $this->produkRepository->getById($id, $fields);
-        
-        if (isset ($data['thumbnail']) && $data['thumbnail'] instanceof UploadedFile){
-            if (!empty($produk->thumbnail)){
+
+        if (isset($data['thumbnail']) && $data['thumbnail'] instanceof UploadedFile) {
+            if (!empty($produk->thumbnail)) {
                 $this->deletePhoto($produk->thumbnail);
             }
             $data['thumbnail'] = $this->uploadPhoto($data['thumbnail']);
@@ -51,11 +51,12 @@ class ProdukService
     {
         $fields = ['*'];
         $produk = $this->produkRepository->getById($id, $fields);
-        
-        if ($produk->thumbnail) {
-            $this->deletePhoto($produk->thumbnail);
+
+        $rawThumbnail = $produk->getRawOriginal('thumbnail');
+        if ($rawThumbnail) {
+            $this->deletePhoto($rawThumbnail);
         }
-         $this->produkRepository->delete($id);
+        $this->produkRepository->delete($id);
     }
 
     private function uploadPhoto(UploadedFile $photo)
@@ -66,7 +67,7 @@ class ProdukService
     private function deletePhoto(string $photoPath)
     {
         $relativePath = 'produk/' . basename($photoPath);
-        if (Storage::disk('public')->exists($relativePath)){
+        if (Storage::disk('public')->exists($relativePath)) {
             Storage::disk('public')->delete($relativePath);
         }
     }

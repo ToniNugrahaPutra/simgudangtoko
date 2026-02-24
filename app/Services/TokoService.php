@@ -31,7 +31,7 @@ class TokoService
     public function create(array $data)
     {
         if (isset($data['foto']) && $data['foto'] instanceof UploadedFile) {
-            $data['foto'] = $this->uploadPhoto($data['foto']);
+            $data['foto'] = $this->uploadFoto($data['foto']);
         }
         return $this->tokoRepository->create($data);
     }
@@ -39,13 +39,13 @@ class TokoService
     public function update(int $id, array $data)
     {
         $fields = ['*'];
-        $toko = $this->tokoRepository->getById($id, $fields);    
-    
+        $toko = $this->tokoRepository->getById($id, $fields);
+
         if (isset($data['foto']) && $data['foto'] instanceof UploadedFile) {
             if (!empty($toko->foto)) {
-                $this->deletePhoto($toko->foto);
+                $this->deleteFoto($toko->foto);
             }
-            $data['foto'] = $this->uploadPhoto($data['foto']);
+            $data['foto'] = $this->uploadFoto($data['foto']);
         }
         return $this->tokoRepository->update($id, $data);
     }
@@ -54,9 +54,9 @@ class TokoService
     {
         $fields = ['*'];
         $toko = $this->tokoRepository->getById($id, $fields);
-        
+
         if ($toko->foto) {
-            $this->deletePhoto($toko->foto);
+            $this->deleteFoto($toko->foto);
         }
         return $this->tokoRepository->delete($id);
     }
@@ -67,12 +67,12 @@ class TokoService
         return $this->tokoRepository->getByOperatorId($operatorId, $fields);
     }
 
-    private function uploadPhoto(UploadedFile $foto): string
+    private function uploadFoto(UploadedFile $foto): string
     {
         return $foto->store('toko', 'public');
     }
 
-    private function deletePhoto(string $fotoPath): void
+    private function deleteFoto(string $fotoPath): void
     {
         $relativePath = 'toko/' . basename($fotoPath);
         if (Storage::disk('public')->exists($relativePath)) {
