@@ -12,7 +12,7 @@ class TransaksiRepository
         return Transaksi::select($fields)
             ->with(['detailTransaksi.produk.kategori', 'toko.operator'])
             ->latest()
-            ->paginate(10);
+            ->get();
     }
 
     public function getById(int $id, array $fields = ['*'])
@@ -45,10 +45,10 @@ class TransaksiRepository
         foreach ($products as $product) {
             DetailTransaksi::create([
                 'transaksi_id' => $transaksiId,
-                'produk_id'    => $product['produk_id'],
-                'jumlah'       => $product['jumlah'],
-                'harga'        => $product['harga'],
-                'sub_total'    => $product['sub_total'],
+                'produk_id' => $product['produk_id'],
+                'jumlah' => $product['jumlah'],
+                'harga' => $product['harga'],
+                'sub_total' => $product['sub_total'],
             ]);
         }
     }
@@ -58,6 +58,6 @@ class TransaksiRepository
         return Transaksi::where('toko_id', $tokoId)
             ->with(['toko', 'detailTransaksi.produk.kategori'])
             ->latest()
-            ->paginate(10);
+            ->get();
     }
 }

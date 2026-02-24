@@ -8,11 +8,17 @@ class RoleRepository
 {
     public function getAll(array $fields)
     {
-        return Role::select($fields)->latest()->paginate(10);
+        if (!in_array('*', $fields) && !in_array('guard_name', $fields)) {
+            $fields[] = 'guard_name';
+        }
+        return Role::select($fields)->withCount(['users as pengguna_count'])->latest()->paginate(10);
     }
 
     public function getById(int $id, array $fields)
     {
+        if (!in_array('*', $fields) && !in_array('guard_name', $fields)) {
+            $fields[] = 'guard_name';
+        }
         return Role::select($fields)->findOrFail($id);
     }
 

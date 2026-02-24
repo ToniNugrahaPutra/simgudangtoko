@@ -8,11 +8,11 @@ class KategoriRepository
 {
     public function getAll(array $fields)
     {
-        return Kategori::select($fields)->latest()->paginate(10);
+        return Kategori::select($fields)->withCount('produk')->latest()->get();
     }
 
     public function getById(int $id, array $fields)
-    { 
+    {
         return Kategori::select($fields)->findOrFail($id);
     }
 
