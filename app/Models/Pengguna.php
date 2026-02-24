@@ -15,7 +15,7 @@ class Pengguna extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasRoles, HasFactory, Notifiable;
-    
+
     protected $table = 'pengguna';
 
     protected $guard_name = 'web';
@@ -55,5 +55,18 @@ class Pengguna extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getFotoAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+        return url(Storage::url($value));
+    }
+
+    public function toko()
+    {
+        return $this->hasOne(Toko::class, 'operator_id');
     }
 }

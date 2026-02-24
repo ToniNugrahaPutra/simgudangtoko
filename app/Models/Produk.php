@@ -4,13 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage; 
+use Illuminate\Support\Facades\Storage;
+use App\Models\Kategori;
+use App\Models\Toko;
+use App\Models\Gudang;
+use App\Models\Transaksi;
 
 class Produk extends Model
 {
     //
 
-    use softDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
         'nama',
@@ -59,10 +63,9 @@ class Produk extends Model
 
     public function getThumbnailAttribute($value)
     {
-        if(!$value) {
-            return null; 
+        if (!$value) {
+            return null;
         }
-        return url(Storage::url($value));  
+        return url(Storage::url($value));
     }
 }
- 

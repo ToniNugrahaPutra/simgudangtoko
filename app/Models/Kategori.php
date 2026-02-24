@@ -23,11 +23,11 @@ class Kategori extends Model
         return $this->hasMany(Produk::class);
     }
 
-    public function getPhotoAttribute($value)
+    public function getFotoAttribute($value)
     {
-        if(!$value) {
+        if (!$value) {
             return null;
         }
-        return Storage::url($value);
+        return url(Storage::url($value));
     }
 }

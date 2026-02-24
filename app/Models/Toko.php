@@ -38,9 +38,9 @@ class Toko extends Model
 
     public function getFotoAttribute($value)
     {
-        if(!$value) {
+        if (!$value) {
             return null;
         }
-        return Storage::url($value);
+        return url(Storage::url($value));
     }
 }

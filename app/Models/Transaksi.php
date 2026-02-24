@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Transaksi extends Model
 {
-         use SoftDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
         'nama_pelanggan',
@@ -20,7 +20,7 @@ class Transaksi extends Model
     protected $table = 'transaksi';
     public function toko()
     {
-        return $this->belongsTo(Toko::class);
+        return $this->belongsTo(Toko::class)->withTrashed();
     }
 
     public function detailTransaksi()

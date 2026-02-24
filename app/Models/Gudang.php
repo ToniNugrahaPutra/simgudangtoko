@@ -16,7 +16,7 @@ class Gudang extends Model
         'foto',
         'no_hp',
     ];
-    
+
     protected $table = 'gudang';
 
     public function produk()
@@ -27,9 +27,9 @@ class Gudang extends Model
     }
     public function getFotoAttribute($value)
     {
-        if(!$value) {
+        if (!$value) {
             return null;
         }
-        return Storage::url($value);
+        return url(Storage::url($value));
     }
 }
